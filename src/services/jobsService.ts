@@ -92,6 +92,8 @@ async function getNewJobs() {
     console.log("outside")
     console.log(jobs.map((j: any) => j.title))
     update(allTimejobs.concat(jobs))
+
+    return jobs
 }
 
 export default getNewJobs;

@@ -1,8 +1,9 @@
 import express, { json } from "express";
-import jobsRouter from "./api/JobsRouter";
 import getNewJobs, { job } from "./services/jobsService";
 import cors from 'cors';
 import moment from "moment";
+import nodeNotifier from "node-notifier";
+import { exec } from "child_process";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -34,6 +35,14 @@ export let allTimejobs: job[] = []
 getNewJobs()
 setInterval(() => {
     try {
+        const newJobs = await getNewJobs()
+        newJobs.forEach((x: job) => {
+            const z = nodeNotifier.notify({
+                message: x.body,
+                title: x.title + ' ' + x.price
+            }
+            )
+        })
         getNewJobs()
     } catch(e) {
         console.log(e)
