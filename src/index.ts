@@ -29,13 +29,16 @@ app.get('/jobs', (req, res) => {
     })
 });
 
-setInterval(async () => {
+export let allTimejobs: job[] = []
+
+getNewJobs()
+setInterval(() => {
     try {
-        await getNewJobs()
-    } catch {
-        
+        getNewJobs()
+    } catch(e) {
+        console.log(e)
     }
-}, 5000);
+}, 120000);
 
 app.listen(port, () => {
     console.log('Server listening on port: ' + port);
@@ -45,4 +48,3 @@ export function update(newJobs: job[]) {
     allTimejobs = newJobs
 }
 
-export let allTimejobs: job[] = []
