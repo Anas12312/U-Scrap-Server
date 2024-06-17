@@ -33,18 +33,19 @@ app.get('/jobs', (req, res) => {
 export let allTimejobs: job[] = []
 
 getNewJobs()
-setInterval(() => {
+setInterval(async () => {
     try {
         const newJobs = await getNewJobs()
+        console.log("anass")
+        console.log(newJobs)
         newJobs.forEach((x: job) => {
+            console.log(x)
             const z = nodeNotifier.notify({
                 message: x.body,
                 title: x.title + ' ' + x.price
-            }
-            )
+            })
         })
-        getNewJobs()
-    } catch(e) {
+    } catch (e) {
         console.log(e)
     }
 }, 120000);
