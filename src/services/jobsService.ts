@@ -8,47 +8,58 @@ export interface job {
     body: string
     link: string
     price: string
-    time?: any,
+    time?: any
     timeAgo: string
 }
 async function scrap() {
     const browser = await puppeteer.launch({
         headless: false,
+        timeout: 300_000
     });
     const page = await browser.newPage()
     await page.goto('https://www.upwork.com/nx/search/jobs/?amount=0-99,100-499,500-999&contractor_tier=1,2&payment_verified=1&proposals=0-4,5-9,10-14&q=javascript&t=1')
-
-    const jobs = await page.evaluate((allTimejobs: any) => {
-        const linkes = Array.from(document.querySelectorAll(".job-tile .up-n-link")).map(
-            (element) => element.getAttribute('href')
-        )
-        const titles = Array.from(document.querySelectorAll(".job-tile .up-n-link")).map(
-            (element) => element.textContent
-        );
-        const prices = Array.from(document.querySelectorAll("[data-test='is-fixed-price']")).map(
-            (element) => element.textContent
-        );
-        const bodies = Array.from(document.querySelectorAll("[data-test='UpCLineClamp JobDescription']")).map(
-            (element) => element.textContent
-        );
-        const times = Array.from(document.querySelectorAll("[data-test='job-pubilshed-date']> span:nth-child(2)")).map(
-            (element) => element.textContent
-        );
-        const existing = allTimejobs.map((j: any) => j.link)
-        const data: job[] = []
-        titles.forEach((_, index) => {
-            if (existing.includes("https://www.upwork.com" + linkes[index])) return
-            data.push({
-                title: "" + titles[index],
-                price: "" + prices[index],
-                body: "" + bodies[index],
-                link: "https://www.upwork.com" + linkes[index],
-                timeAgo: times[index]!
-            })
+    await page.waitForNetworkIdle()
+    const articles = await page.$$('article')
+    const jobs: job[] = []
+    for (let article of articles) {
+        const title = await article.$(".job-tile .up-n-link")
+        const titleText = await title?.evaluate((t) => {
+            return t.textContent
         })
-        return data
-    }, allTimejobs)
-
+        const link = await title?.evaluate((t) => {
+            return t.getAttribute('href')
+        })
+        const listElement = await article.$(".job-tile-info-list")
+        const itemElement = (await listElement?.$$("li"))?.at(2)
+        const strongElement = (await itemElement?.$$("strong"))?.at(1)
+        const price = await strongElement?.evaluate((s) => {
+            return s.textContent
+        })
+        const bodyElement = await article.$("p")
+        const body = await bodyElement?.evaluate((b) => {
+            return b.textContent
+        })
+        const headerElement = await article.$(".job-tile-header")
+        const spanElement = (await headerElement?.$$("span"))?.at(1)
+        const time = await spanElement?.evaluate((s) => {
+            return s.textContent
+        })
+        // console.log("--------------------------------")
+        // console.log(titleText)
+        // console.log(link)
+        // console.log(price)
+        // console.log(body)
+        // console.log(time)
+        const existing = allTimejobs.map((j: any) => j.link)
+        if (existing.includes("https://www.upwork.com" + link)) return
+        jobs.push({
+            title: "" + titleText,
+            price: "" + price,
+            body: "" + body,
+            link: "https://www.upwork.com" + link,
+            timeAgo: time!
+        })
+    }
     browser.close()
     return jobs
 }
@@ -58,7 +69,7 @@ async function getNewJobs() {
     console.log(allTimejobs.map((j: any) => j.title))
     let jobs = await scrap()
 
-    jobs = jobs.map((x: job) => {
+    jobs = jobs!.map((x: job) => {
         const jobTime = x.timeAgo.split(' ');
         let actualTime;
 

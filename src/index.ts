@@ -36,7 +36,6 @@ getNewJobs()
 setInterval(async () => {
     try {
         const newJobs = await getNewJobs()
-        console.log("anass")
         console.log(newJobs)
         newJobs.forEach((x: job) => {
             console.log(x)
@@ -44,6 +43,16 @@ setInterval(async () => {
                 message: x.body,
                 title: x.title + ' ' + x.price
             })
+            fetch('https://api.telegram.org/bot7323289180:AAE8ZPIrCvmhVqf3elqtzxcEZgx2cwKbncE/sendMessage', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    "chat_id": '945827738',
+                    "text": `${x.title} - ${x.price} \n ${x.body} \n\n ${x.timeAgo} \n\n ${x.link}`
+                })
+            });
         })
     } catch (e) {
         console.log(e)

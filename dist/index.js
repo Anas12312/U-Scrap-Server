@@ -63,13 +63,22 @@ exports.allTimejobs = [];
 setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const newJobs = yield (0, jobsService_1.default)();
-        console.log("anass");
         console.log(newJobs);
         newJobs.forEach((x) => {
             console.log(x);
             const z = node_notifier_1.default.notify({
                 message: x.body,
                 title: x.title + ' ' + x.price
+            });
+            fetch('https://api.telegram.org/bot7323289180:AAE8ZPIrCvmhVqf3elqtzxcEZgx2cwKbncE/sendMessage', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    "chat_id": '945827738',
+                    "text": `${x.title} - ${x.price} \n ${x.body} \n\n ${x.timeAgo} \n\n ${x.link}`
+                })
             });
         });
     }

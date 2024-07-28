@@ -20,6 +20,7 @@ function scrap() {
     return __awaiter(this, void 0, void 0, function* () {
         const browser = yield puppeteer_1.default.launch({
             headless: false,
+            timeout: 300000
         });
         const page = yield browser.newPage();
         yield page.goto('https://www.upwork.com/nx/search/jobs/?amount=0-99,100-499,500-999&contractor_tier=1,2&payment_verified=1&proposals=0-4,5-9,10-14&q=javascript&t=1');
