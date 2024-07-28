@@ -18,7 +18,7 @@ async function scrap() {
     });
     const page = await browser.newPage()
     await page.goto('https://www.upwork.com/nx/search/jobs/?amount=0-99,100-499,500-999&contractor_tier=1,2&payment_verified=1&proposals=0-4,5-9,10-14&q=javascript&t=1')
-    await page.waitForNetworkIdle()
+    // await page.waitForNetworkIdle()
     const articles = await page.$$('article')
     const jobs: job[] = []
     for (let article of articles) {
@@ -60,7 +60,7 @@ async function scrap() {
             timeAgo: time!
         })
     }
-    browser.close()
+    await browser.close()
     return jobs
 }
 
@@ -69,7 +69,7 @@ async function getNewJobs() {
     console.log(allTimejobs.map((j: any) => j.title))
     let jobs = await scrap()
 
-    jobs = jobs!.map((x: job) => {
+    jobs = jobs?.map((x: job) => {
         const jobTime = x.timeAgo.split(' ');
         let actualTime;
 
@@ -101,8 +101,8 @@ async function getNewJobs() {
     })
 
     console.log("outside")
-    console.log(jobs.map((j: any) => j.title))
-    update(allTimejobs.concat(jobs))
+    console.log(jobs?.map((j: any) => j.title))
+    jobs && update(allTimejobs.concat(jobs))
 
     return jobs
 }

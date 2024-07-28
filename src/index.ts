@@ -37,7 +37,7 @@ setInterval(async () => {
     try {
         const newJobs = await getNewJobs()
         console.log(newJobs)
-        newJobs.forEach((x: job) => {
+        newJobs?.forEach((x: job) => {
             console.log(x)
             const z = nodeNotifier.notify({
                 message: x.body,
