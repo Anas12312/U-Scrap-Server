@@ -20,7 +20,7 @@ function scrap() {
     return __awaiter(this, void 0, void 0, function* () {
         var _a, _b, _c;
         const browser = yield puppeteer_1.default.launch({
-            headless: false,
+            // headless: false,
             timeout: 300000,
             args: [
                 "--disable-setuid-sandbox",

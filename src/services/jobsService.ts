@@ -13,7 +13,7 @@ export interface job {
 }
 async function scrap() {
     const browser = await puppeteer.launch({
-        headless: false,
+        // headless: false,
         timeout: 300_000,
         args: [
             "--disable-setuid-sandbox",
@@ -26,7 +26,7 @@ async function scrap() {
                 ? process.env.PUPPETEER_EXECUTABLE_PATH
                 : puppeteer.executablePath(),
     })
-    
+
     const page = await browser.newPage()
     await page.goto('https://www.upwork.com/nx/search/jobs/?amount=0-99,100-499,500-999&contractor_tier=1,2&payment_verified=1&proposals=0-4,5-9,10-14&q=javascript&t=1')
     // await page.waitForNetworkIdle()
