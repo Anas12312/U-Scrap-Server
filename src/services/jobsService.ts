@@ -16,7 +16,7 @@ export interface job {
 }
 async function scrap() {
     const browser = await puppeteer.launch({
-        // headless: false,
+        headless: false,
         timeout: 300_000,
         args: [
             "--disable-setuid-sandbox",
