@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "rimraf ./dist && tsc",
+    "build": "tsc",
     "dev": "npx nodemon",
     "start": "node dist/index.js",
     "z": "git add . && git commit -m 'z' && git push origin zyad"

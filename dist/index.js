@@ -41,11 +41,14 @@ const jobsService_1 = __importDefault(require("./services/jobsService"));
 const cors_1 = __importDefault(require("cors"));
 const moment_1 = __importDefault(require("moment"));
 const node_notifier_1 = __importDefault(require("node-notifier"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 3000;
 // JSON Parser Middleware
 app.use((0, express_1.json)());
 app.use((0, cors_1.default)());
+//asds
 // Routers Middleware
 app.get('/jobs', (req, res) => {
     const jobs = exports.allTimejobs.map(x => {
@@ -64,7 +67,7 @@ setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const newJobs = yield (0, jobsService_1.default)();
         console.log(newJobs);
-        newJobs.forEach((x) => {
+        newJobs === null || newJobs === void 0 ? void 0 : newJobs.forEach((x) => {
             console.log(x);
             const z = node_notifier_1.default.notify({
                 message: x.body,
