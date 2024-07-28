@@ -4,6 +4,8 @@ import cors from 'cors';
 import moment from "moment";
 import nodeNotifier from "node-notifier";
 import { exec } from "child_process";
+import dotenv from 'dotenv'
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
