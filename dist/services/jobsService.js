@@ -16,6 +16,8 @@ const puppeteer_1 = __importDefault(require("puppeteer"));
 const __1 = require("..");
 const __2 = require("..");
 const moment_1 = __importDefault(require("moment"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 function scrap() {
     return __awaiter(this, void 0, void 0, function* () {
         var _a, _b, _c;

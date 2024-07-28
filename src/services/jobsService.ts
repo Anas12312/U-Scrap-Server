@@ -3,6 +3,9 @@ import { Request, Response } from 'express';
 import { allTimejobs } from '..'
 import { update } from '..'
 import moment from 'moment';
+import dotenv from 'dotenv'
+dotenv.config();
+
 export interface job {
     title: string
     body: string
