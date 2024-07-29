@@ -15,8 +15,12 @@ export interface job {
     timeAgo: string,
     type: string
 }
-async function scrap(search: string, browser: Browser, type: string) {
-
+async function scrap(search: string, type: string) {
+    const browser = await puppeteer.launch({
+        headless: false,
+        timeout: 300_000,
+        executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe"
+    })
     const page = await browser.newPage()
     await page.goto(search)
     // await page.waitForNetworkIdle()
@@ -52,7 +56,7 @@ async function scrap(search: string, browser: Browser, type: string) {
         // console.log(body)
         // console.log(time)
         const existing = allTimejobs.map((j: any) => j.link)
-        if (existing.includes("https://www.upwork.com" + link)) return
+        if (existing.includes("https://www.upwork.com" + link)) continue
         jobs.push({
             title: "" + titleText,
             price: "" + price,
@@ -62,14 +66,14 @@ async function scrap(search: string, browser: Browser, type: string) {
             type: type
         })
     }
-    await page.close()
+    await browser.close()
     return jobs
 }
 
 async function getNewJobs(search: string, browser: Browser, type: string) {
     console.log("getting-data")
-    console.log(allTimejobs.map((j: any) => j.title))
-    let jobs = await scrap(search, browser, type)
+    // console.log(allTimejobs.map((j: any) => j.title))
+    let jobs = await scrap(search, type)
 
     jobs = jobs?.map((x: job) => {
         const jobTime = x.timeAgo.split(' ');
@@ -102,8 +106,6 @@ async function getNewJobs(search: string, browser: Browser, type: string) {
         }
     })
 
-    console.log("outside")
-    console.log(jobs?.map((j: any) => j.title))
     jobs && update(allTimejobs.concat(jobs))
 
     return jobs

@@ -35,63 +35,69 @@ app.get('/jobs', (req, res) => {
 
 export let allTimejobs: job[] = []
 
-const browser = puppeteer.launch({
+puppeteer.launch({
     headless: false,
-    timeout: 300_000
-})
+    timeout: 300_000,
+    executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe"
+}).then(async (browser) => {
+    await browser.close()
+    let firstTime = false;
 
-let firstTime = false;
-
-setInterval(async () => {
-    try {
-        if (!firstTime) {
-            await getNewJobs('https://www.upwork.com/nx/search/jobs/?amount=0-99,100-499,500-999&contractor_tier=1,2&payment_verified=1&proposals=0-4,5-9,10-14&q=javascript&t=1',
-                await browser,
+    setInterval(async () => {
+        try {
+            if (!firstTime) {
+                const newJobs = await getNewJobs('https://www.upwork.com/nx/search/jobs/?amount=0-99,100-499,500-999&contractor_tier=1,2&payment_verified=1&proposals=0-4,5-9,10-14&q=javascript&t=0,1',
+                    browser,
+                    'JAVASCRIPT')
+                firstTime = true;
+                console.log(newJobs.map(j => j.title))
+                return
+            }
+            const newJobs = await getNewJobs('https://www.upwork.com/nx/search/jobs/?amount=0-99,100-499,500-999&contractor_tier=1,2&payment_verified=1&proposals=0-4,5-9,10-14&q=javascript&t=0,1',
+                browser,
                 'JAVASCRIPT')
-            firstTime = true;
-            return
+            console.log("js jobs")
+            console.log(newJobs)
+            newJobs?.forEach((x: job) => {
+                // const z = nodeNotifier.notify({
+                //     message: x.body,
+                //     title: x.title + ' ' + x.price
+                // })
+                sendTelegram(x)
+            })
+        } catch (e) {
+            console.log(e)
         }
-        const newJobs = await getNewJobs('https://www.upwork.com/nx/search/jobs/?amount=0-99,100-499,500-999&contractor_tier=1,2&payment_verified=1&proposals=0-4,5-9,10-14&q=javascript&t=1',
-            await browser,
-            'JAVASCRIPT')
-        console.log(newJobs)
-        newJobs?.forEach((x: job) => {
-            console.log(x)
-            // const z = nodeNotifier.notify({
-            //     message: x.body,
-            //     title: x.title + ' ' + x.price
-            // })
-            sendTelegram(x)
-        })
-    } catch (e) {
-        console.log(e)
-    }
-}, 10000);
-
-const browser2 = puppeteer.launch({
-    headless: false,
-    timeout: 300_000
+    }, 60_000);
 })
 
-let firtsTime2 = false;
-setInterval(async () => {
-    try {
-        if (!firtsTime2) {
-            await getNewJobs('https://www.upwork.com/nx/search/jobs/?amount=0-99,100-499,500-999&nbs=1&payment_verified=1&proposals=0-4,5-9,10-14&q=scraping&sort=recency&t=1', await browser2, 'SCRAPE')
-            firtsTime2 = true;
-            return
-        }
-        const newJobs = await getNewJobs('https://www.upwork.com/nx/search/jobs/?amount=0-99,100-499,500-999&nbs=1&payment_verified=1&proposals=0-4,5-9,10-14&q=scraping&sort=recency&t=1', await browser2, 'SCRAPE')
-        console.log(newJobs)
-        newJobs?.forEach((x: job) => {
-            console.log(x)
-            sendTelegram(x);
-        })
-    } catch (e) {
-        console.log(e)
-    }
-}, 10000);
 
+
+puppeteer.launch({
+    headless: false,
+    timeout: 300_000,
+    executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe"
+}).then(async (browser2) => {
+    await browser2.close()
+    let firtsTime2 = false;
+    setInterval(async () => {
+        try {
+            if (!firtsTime2) {
+                await getNewJobs('https://www.upwork.com/nx/search/jobs/?amount=0-99,100-499,500-999&contractor_tier=1,2&payment_verified=1&proposals=0-4,5-9,10-14&q=scrapping&t=0,1', browser2, 'SCRAPE')
+                firtsTime2 = true;
+                return
+            }
+            const newJobs = await getNewJobs('https://www.upwork.com/nx/search/jobs/?amount=0-99,100-499,500-999&contractor_tier=1,2&payment_verified=1&proposals=0-4,5-9,10-14&q=scrapping&t=0,1', browser2, 'SCRAPE')
+            console.log("scrap jobs")
+            console.log(newJobs)
+            newJobs?.forEach((x: job) => {
+                sendTelegram(x);
+            })
+        } catch (e) {
+            console.log(e)
+        }
+    }, 60_000);
+})
 
 
 app.listen(port, () => {
@@ -109,7 +115,7 @@ const sendTelegram = (x: job) => {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            "chat_id": process.env.TOKEN,
+            "chat_id": 945827738,
             "text": `${x.title} - ${x.price} \n ${x.body} \n\n ${x.timeAgo} \n\n ${x.type} \n\n ${x.link}`
         })
     });
