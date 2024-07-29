@@ -1,4 +1,4 @@
-import puppeteer from 'puppeteer';
+import puppeteer, { Browser } from 'puppeteer';
 import { Request, Response } from 'express';
 import { allTimejobs } from '..'
 import { update } from '..'
@@ -12,26 +12,13 @@ export interface job {
     link: string
     price: string
     time?: any
-    timeAgo: string
+    timeAgo: string,
+    type: string
 }
-async function scrap() {
-    const browser = await puppeteer.launch({
-        headless: false,
-        timeout: 300_000,
-        args: [
-            "--disable-setuid-sandbox",
-            "--no-sandbox",
-            "--single-process",
-            "--no-zygote",
-        ],
-        executablePath:
-            process.env.NODE_ENV === "production"
-                ? process.env.PUPPETEER_EXECUTABLE_PATH
-                : puppeteer.executablePath(),
-    })
+async function scrap(search: string, browser: Browser, type: string) {
 
     const page = await browser.newPage()
-    await page.goto('https://www.upwork.com/nx/search/jobs/?amount=0-99,100-499,500-999&contractor_tier=1,2&payment_verified=1&proposals=0-4,5-9,10-14&q=javascript&t=1')
+    await page.goto(search)
     // await page.waitForNetworkIdle()
     const articles = await page.$$('article')
     const jobs: job[] = []
@@ -71,17 +58,18 @@ async function scrap() {
             price: "" + price,
             body: "" + body,
             link: "https://www.upwork.com" + link,
-            timeAgo: time!
+            timeAgo: time!,
+            type: type
         })
     }
-    await browser.close()
+    await page.close()
     return jobs
 }
 
-async function getNewJobs() {
+async function getNewJobs(search: string, browser: Browser, type: string) {
     console.log("getting-data")
     console.log(allTimejobs.map((j: any) => j.title))
-    let jobs = await scrap()
+    let jobs = await scrap(search, browser, type)
 
     jobs = jobs?.map((x: job) => {
         const jobTime = x.timeAgo.split(' ');
