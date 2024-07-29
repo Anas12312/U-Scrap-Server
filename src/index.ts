@@ -4,6 +4,9 @@ import cors from 'cors';
 import moment from "moment";
 import nodeNotifier from "node-notifier";
 import { exec } from "child_process";
+import puppeteer from "puppeteer";
+import dotenv from 'dotenv'
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -11,7 +14,7 @@ const port = process.env.PORT || 3000;
 // JSON Parser Middleware
 app.use(json());
 app.use(cors())
-
+//asds
 // Routers Middleware
 app.get('/jobs', (req, res) => {
 
@@ -32,32 +35,64 @@ app.get('/jobs', (req, res) => {
 
 export let allTimejobs: job[] = []
 
-getNewJobs()
+const browser = puppeteer.launch({
+    headless: false,
+    timeout: 300_000
+})
+
+let firstTime = false;
+
 setInterval(async () => {
     try {
-        const newJobs = await getNewJobs()
+        if (!firstTime) {
+            await getNewJobs('https://www.upwork.com/nx/search/jobs/?amount=0-99,100-499,500-999&contractor_tier=1,2&payment_verified=1&proposals=0-4,5-9,10-14&q=javascript&t=1',
+                await browser,
+                'JAVASCRIPT')
+            firstTime = true;
+            return
+        }
+        const newJobs = await getNewJobs('https://www.upwork.com/nx/search/jobs/?amount=0-99,100-499,500-999&contractor_tier=1,2&payment_verified=1&proposals=0-4,5-9,10-14&q=javascript&t=1',
+            await browser,
+            'JAVASCRIPT')
         console.log(newJobs)
         newJobs?.forEach((x: job) => {
             console.log(x)
-            const z = nodeNotifier.notify({
-                message: x.body,
-                title: x.title + ' ' + x.price
-            })
-            fetch('https://api.telegram.org/bot7323289180:AAE8ZPIrCvmhVqf3elqtzxcEZgx2cwKbncE/sendMessage', {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    "chat_id": '945827738',
-                    "text": `${x.title} - ${x.price} \n ${x.body} \n\n ${x.timeAgo} \n\n ${x.link}`
-                })
-            });
+            // const z = nodeNotifier.notify({
+            //     message: x.body,
+            //     title: x.title + ' ' + x.price
+            // })
+            sendTelegram(x)
         })
     } catch (e) {
         console.log(e)
     }
-}, 120000);
+}, 10000);
+
+const browser2 = puppeteer.launch({
+    headless: false,
+    timeout: 300_000
+})
+
+let firtsTime2 = false;
+setInterval(async () => {
+    try {
+        if (!firtsTime2) {
+            await getNewJobs('https://www.upwork.com/nx/search/jobs/?amount=0-99,100-499,500-999&nbs=1&payment_verified=1&proposals=0-4,5-9,10-14&q=scraping&sort=recency&t=1', await browser2, 'SCRAPE')
+            firtsTime2 = true;
+            return
+        }
+        const newJobs = await getNewJobs('https://www.upwork.com/nx/search/jobs/?amount=0-99,100-499,500-999&nbs=1&payment_verified=1&proposals=0-4,5-9,10-14&q=scraping&sort=recency&t=1', await browser2, 'SCRAPE')
+        console.log(newJobs)
+        newJobs?.forEach((x: job) => {
+            console.log(x)
+            sendTelegram(x);
+        })
+    } catch (e) {
+        console.log(e)
+    }
+}, 10000);
+
+
 
 app.listen(port, () => {
     console.log('Server listening on port: ' + port);
@@ -67,3 +102,15 @@ export function update(newJobs: job[]) {
     allTimejobs = newJobs
 }
 
+const sendTelegram = (x: job) => {
+    fetch('https://api.telegram.org/bot7323289180:AAE8ZPIrCvmhVqf3elqtzxcEZgx2cwKbncE/sendMessage', {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            "chat_id": process.env.TOKEN,
+            "text": `${x.title} - ${x.price} \n ${x.body} \n\n ${x.timeAgo} \n\n ${x.type} \n\n ${x.link}`
+        })
+    });
+}
