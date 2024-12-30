@@ -19,7 +19,7 @@ async function scrap(search: string, type: string) {
     const browser = await puppeteer.launch({
         headless: false,
         timeout: 300_000,
-        executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe"
+        // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe"
     })
     const page = await browser.newPage()
     await page.goto(search)

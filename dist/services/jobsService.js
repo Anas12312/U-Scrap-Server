@@ -18,24 +18,16 @@ const __2 = require("..");
 const moment_1 = __importDefault(require("moment"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-function scrap() {
+function scrap(search, type) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a, _b, _c;
         const browser = yield puppeteer_1.default.launch({
             headless: false,
             timeout: 300000,
-            args: [
-                "--disable-setuid-sandbox",
-                "--no-sandbox",
-                "--single-process",
-                "--no-zygote",
-            ],
-            executablePath: process.env.NODE_ENV === "production"
-                ? process.env.PUPPETEER_EXECUTABLE_PATH
-                : puppeteer_1.default.executablePath(),
+            executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe"
         });
         const page = yield browser.newPage();
-        yield page.goto('https://www.upwork.com/nx/search/jobs/?amount=0-99,100-499,500-999&contractor_tier=1,2&payment_verified=1&proposals=0-4,5-9,10-14&q=javascript&t=1');
+        yield page.goto(search);
         // await page.waitForNetworkIdle()
         const articles = yield page.$$('article');
         const jobs = [];
@@ -70,24 +62,25 @@ function scrap() {
             // console.log(time)
             const existing = __1.allTimejobs.map((j) => j.link);
             if (existing.includes("https://www.upwork.com" + link))
-                return;
+                continue;
             jobs.push({
                 title: "" + titleText,
                 price: "" + price,
                 body: "" + body,
                 link: "https://www.upwork.com" + link,
-                timeAgo: time
+                timeAgo: time,
+                type: type
             });
         }
         yield browser.close();
         return jobs;
     });
 }
-function getNewJobs() {
+function getNewJobs(search, browser, type) {
     return __awaiter(this, void 0, void 0, function* () {
         console.log("getting-data");
-        console.log(__1.allTimejobs.map((j) => j.title));
-        let jobs = yield scrap();
+        // console.log(allTimejobs.map((j: any) => j.title))
+        let jobs = yield scrap(search, type);
         jobs = jobs === null || jobs === void 0 ? void 0 : jobs.map((x) => {
             const jobTime = x.timeAgo.split(' ');
             let actualTime;
@@ -111,8 +104,6 @@ function getNewJobs() {
             }
             return Object.assign(Object.assign({}, x), { time: actualTime, timeAgo: actualTime.fromNow() });
         });
-        console.log("outside");
-        console.log(jobs === null || jobs === void 0 ? void 0 : jobs.map((j) => j.title));
         jobs && (0, __2.update)(__1.allTimejobs.concat(jobs));
         return jobs;
     });
