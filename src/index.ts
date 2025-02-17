@@ -38,7 +38,10 @@ export let allTimejobs: job[] = []
 puppeteer.launch({
     headless: true,
     timeout: 300_000,
-    executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe"
+    args: [
+        '--window-position=4000,4000'
+    ]
+    // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe"
 }).then(async (browser) => {
     await browser.close()
     let firstTime = false;
@@ -70,7 +73,6 @@ puppeteer.launch({
         }
     }
 
-    run()
     setInterval(() => {
         run()
     }, 30_000);
@@ -81,6 +83,9 @@ puppeteer.launch({
 // puppeteer.launch({
 //     headless: true,
 //     timeout: 300_000,
+args: [
+    '--window-position=4000,4000'
+]
 //     executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe"
 // }).then(async (browser2) => {
 //     await browser2.close()
@@ -107,6 +112,171 @@ puppeteer.launch({
 //     }, 120_000);
 // })
 
+puppeteer.launch({
+    headless: true,
+    timeout: 300_000,
+    args: [
+        '--window-position=4000,4000'
+    ]
+    // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe"
+}).then(async (browser) => {
+    await browser.close()
+    let firstTime = false;
+
+    async function run() {
+        try {
+            // if (!firstTime) {
+            //     const newJobs = await getNewJobs('https://www.upwork.com/nx/search/jobs/?amount=0-99,100-499,500-999&contractor_tier=1,2&payment_verified=1&proposals=0-4,5-9,10-14&q=javascript&t=0,1',
+            //         browser,
+            //         'JAVASCRIPT')
+            //     firstTime = true;
+            //     console.log(newJobs.map(j => j.title))
+            //     return
+            // }
+            const newJobs = await getNewJobs('https://www.upwork.com/nx/search/jobs/?amount=0-99,100-499,500-999&contractor_tier=1,2&payment_verified=1&proposals=0-4,5-9,10-14&q=scrapping&t=0,1', browser, 'SCRAPE')
+            console.log("js jobs")
+            console.log(newJobs)
+            newJobs?.forEach((x: job) => {
+                // const z = nodeNotifier.notify({
+                //     message: x.body,
+                //     title: x.title + ' ' + x.price
+                // })
+                // sendTelegram(x)
+            })
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    setInterval(() => {
+        run()
+    }, 45_000);
+})
+
+
+
+puppeteer.launch({
+    headless: true,
+    timeout: 300_000,
+    args: [
+        '--window-position=4000,4000'
+    ]
+    // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe"
+}).then(async (browser) => {
+    await browser.close()
+    let firstTime = false;
+
+    async function run() {
+        try {
+            // if (!firstTime) {
+            //     const newJobs = await getNewJobs('https://www.upwork.com/nx/search/jobs/?amount=0-99,100-499,500-999&contractor_tier=1,2&payment_verified=1&proposals=0-4,5-9,10-14&q=javascript&t=0,1',
+            //         browser,
+            //         'JAVASCRIPT')
+            //     firstTime = true;
+            //     console.log(newJobs.map(j => j.title))
+            //     return
+            // }
+            const newJobs = await getNewJobs('https://www.upwork.com/nx/search/jobs/?amount=0-99,100-499,500-999&contractor_tier=1,2&q=chatbot&t=0,1', browser, 'CHATBOT')
+            console.log("js jobs")
+            console.log(newJobs)
+            newJobs?.forEach((x: job) => {
+                // const z = nodeNotifier.notify({
+                //     message: x.body,
+                //     title: x.title + ' ' + x.price
+                // })
+                // sendTelegram(x)
+            })
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    setInterval(() => {
+        run()
+    }, 70_000);
+})
+
+
+puppeteer.launch({
+    headless: true,
+    timeout: 300_000,
+    // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe"
+}).then(async (browser) => {
+    await browser.close()
+    let firstTime = false;
+
+    async function run() {
+        try {
+            // if (!firstTime) {
+            //     const newJobs = await getNewJobs('https://www.upwork.com/nx/search/jobs/?amount=0-99,100-499,500-999&contractor_tier=1,2&payment_verified=1&proposals=0-4,5-9,10-14&q=javascript&t=0,1',
+            //         browser,
+            //         'JAVASCRIPT')
+            //     firstTime = true;
+            //     console.log(newJobs.map(j => j.title))
+            //     return
+            // }
+            const newJobs = await getNewJobs('https://www.upwork.com/nx/search/jobs/?amount=0-99,100-499,500-999&contractor_tier=1,2&q=web%20automation&t=0,1', browser, 'WEB_AUTOMATION')
+            console.log("js jobs")
+            console.log(newJobs)
+            newJobs?.forEach((x: job) => {
+                // const z = nodeNotifier.notify({
+                //     message: x.body,
+                //     title: x.title + ' ' + x.price
+                // })
+                // sendTelegram(x)
+            })
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    setInterval(() => {
+        run()
+    }, 120_000);
+})
+
+
+
+puppeteer.launch({
+    headless: true,
+    timeout: 300_000,
+    args: [
+        '--window-position=4000,4000'
+    ]
+    // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe"
+}).then(async (browser) => {
+    await browser.close()
+    let firstTime = false;
+
+    async function run() {
+        try {
+            // if (!firstTime) {
+            //     const newJobs = await getNewJobs('https://www.upwork.com/nx/search/jobs/?amount=0-99,100-499,500-999&contractor_tier=1,2&payment_verified=1&proposals=0-4,5-9,10-14&q=javascript&t=0,1',
+            //         browser,
+            //         'JAVASCRIPT')
+            //     firstTime = true;
+            //     console.log(newJobs.map(j => j.title))
+            //     return
+            // }
+            const newJobs = await getNewJobs('https://www.upwork.com/nx/search/jobs/?amount=0-99,100-499,500-999&contractor_tier=1,2&q=web%20development&t=0,1', browser, 'WEB_DEVELOPMENT')
+            console.log("js jobs")
+            console.log(newJobs)
+            newJobs?.forEach((x: job) => {
+                // const z = nodeNotifier.notify({
+                //     message: x.body,
+                //     title: x.title + ' ' + x.price
+                // })
+                // sendTelegram(x)
+            })
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    setInterval(() => {
+        run()
+    }, 70_000);
+})
 
 app.listen(port, () => {
     console.log('Server listening on port: ' + port);
