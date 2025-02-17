@@ -19,10 +19,14 @@ async function scrap(search: string, type: string) {
     const browser = await puppeteer.launch({
         headless: false,
         timeout: 300_000,
-        executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe"
+        args: [
+            '--window-position=04000,-4000'
+        ]
+        // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe"
     })
     const page = await browser.newPage()
-    await page.goto(search)
+    try {
+        await page.goto(search)
     // await page.waitForNetworkIdle()
     const articles = await page.$$('article')
     const jobs: job[] = []
@@ -68,6 +72,10 @@ async function scrap(search: string, type: string) {
     }
     await browser.close()
     return jobs
+    }
+    catch(e) {
+        await browser.close()
+    }
 }
 
 async function getNewJobs(search: string, browser: Browser, type: string) {
